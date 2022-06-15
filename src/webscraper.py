@@ -1,38 +1,56 @@
 from bs4 import BeautifulSoup
-from playwright.async_api import async_playwright
+import cloudscraper
+import json
 import util
 
-async def scrape(sportsbooks, sports):
-    bet_matrix = [['Away', 'Home'].extend(sportsbooks)]
-    async with async_playwright() as pw: 
-        # Opening page in Chrome
-        browser = await pw.chromium.launch(
-            headless=True  # Show the browser
-        )
-        page = await browser.new_page()
-        for sportsbook in sportsbooks:
-            for sport in sports:
-                url = util.sportsbook_url_dict[sportsbook]['base_url'] + util.sportsbook_url_dict[sportsbook][sport]
-                await page.goto(url)
+async def scrape(leagues):
+    BASE_URL = 'base_url'
+    CARD = 'card'
+    CARDS = 'cards'
+    MATCHES = 'matches'
+    ID = 'id'
+    ID_CLASS = 'initial-data'
+    DATE = 'date'
+    DATA = 'data'
+    AWAY_TEAM = 'awayTeam'
+    HOME_TEAM = 'homeTeam'
+    FULL_NAME = 'fullName'
+    MARKETS = 'marketsForNewCard'
+    BETS = 'bets'
+    NAME = 'name'
+    BEST_ODDS = 'bestOddsUs'
+    BEST_SB = 'bestOddsBookmakers'
+
+    bet_matrix = [['Away', 'Home', 'Best Away Odds', 'Best Home Odds', 'Time of Game']]
+    for league in leagues:
+        # Scrape webpage
+        scraper = cloudscraper.create_scraper()
+        url = util.url_dict[BASE_URL] + util.url_dict[league]
+        page_content = scraper.get(url)
+
+        # Extract JSON from page
+        soup = BeautifulSoup(page_content.text,'html.parser')
+        data = json.loads(soup.find('script', {ID: ID_CLASS}).text)
+        matches = data[CARD][MATCHES]
+
+        with open('test.json', 'w') as f:
+            json.dump(matches, f)
+
+        for match_set in matches:
+            date = util.format_date(match_set[DATE])
+            for match in match_set[CARDS][0][DATA]:
+                away_name = match[AWAY_TEAM][FULL_NAME]
+                home_name = match[HOME_TEAM][FULL_NAME]
+                for all_bets in match[MARKETS]:
+                    for bet in all_bets[BETS]:
+                        if bet[NAME] == away_name:
+                            away_odds = util.format_odds(bet[BEST_ODDS])
+                            away_sb = util.sportsbook_dict[bet[BEST_SB][:2]]
+                        elif bet[NAME] == home_name:
+                            home_odds = util.format_odds(bet[BEST_ODDS])
+                            home_sb = util.sportsbook_dict[bet[BEST_SB][:2]]
                 
-                # Extracting page elements into betting matrix
-                page_content = await page.content()
-                soup = BeautifulSoup(page_content,'html.parser')
+                bet_matrix.append([away_name, home_name, away_sb + ' : ' + away_odds, home_sb + ' : ' + home_odds, date])
 
-                AWAY_NAME_INDEX = 0
-                HOME_NAME_INDEX = 1
 
-                for match in soup.find_all('div', {'class': util.html_class_dict[sportsbook]['match']}):
-                    team_names =  match.find_all('span', {'class': util.html_class_dict[sportsbook][sport + '_team_name']})
-                    if len(team_names) == 2:
-                        away_name, home_name = team_names
-                        found = False
-                        for e in bet_matrix[1:]:
-                            if away_name == e[AWAY_NAME_INDEX] and home_name == e[HOME_NAME_INDEX]:
-                                print("TODO")
-                                found = True
-                                break
-                        if not found:
-                            bet_matrix.append([away_name, home_name].extend(['ODDS'] * len(sportsbook) * 2))
-        await browser.close()
     return bet_matrix

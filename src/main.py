@@ -1,14 +1,12 @@
 import asyncio
 import webscraper
+import util
 
 if __name__ == '__main__':
-    sportsbooks = [
-        'FanDuel'
-    ]
-    sports = [
-        'baseball',
-        'basketball',
+    leagues = [
+        'mlb',
+        'nba'
     ]
 
-    bet_matrix = asyncio.run(webscraper.scrape(sportsbooks, sports))
-    print(bet_matrix)
+    bet_matrix = asyncio.run(webscraper.scrape(leagues))
+    util.print_matrix(bet_matrix)
