@@ -20,8 +20,11 @@ async def scrape(leagues):
     NAME = 'name'
     BEST_ODDS = 'bestOddsUs'
     BEST_SB = 'bestOddsBookmakers'
+    BET_NAME_LEN = 25
+    SP_NAME_LEN = 15
+    ODDS_LEN = 7
 
-    bet_matrix = [['Away', 'Home', 'Best Away Odds', 'Best Home Odds', 'Time of Game']]
+    bet_matrix = []
     for league in leagues:
         # Scrape webpage
         scraper = cloudscraper.create_scraper()
@@ -39,18 +42,12 @@ async def scrape(leagues):
         for match_set in matches:
             date = util.format_date(match_set[DATE])
             for match in match_set[CARDS][0][DATA]:
-                away_name = match[AWAY_TEAM][FULL_NAME]
-                home_name = match[HOME_TEAM][FULL_NAME]
+                matrix_entry = [match[AWAY_TEAM][FULL_NAME], match[HOME_TEAM][FULL_NAME], date]
                 for all_bets in match[MARKETS]:
                     for bet in all_bets[BETS]:
-                        if bet[NAME] == away_name:
-                            away_odds = util.format_odds(bet[BEST_ODDS])
-                            away_sb = util.sportsbook_dict[bet[BEST_SB][:2]]
-                        elif bet[NAME] == home_name:
-                            home_odds = util.format_odds(bet[BEST_ODDS])
-                            home_sb = util.sportsbook_dict[bet[BEST_SB][:2]]
-                
-                bet_matrix.append([away_name, home_name, away_sb + ' : ' + away_odds, home_sb + ' : ' + home_odds, date])
+                        matrix_entry.append(f"{bet['name']:<{BET_NAME_LEN}} {' - ' + util.sportsbook_dict[bet[BEST_SB][:2]]:<{SP_NAME_LEN}} {' : ' + util.format_odds(bet[BEST_ODDS]):<{ODDS_LEN}}")
+                        
+                bet_matrix.append(matrix_entry)
 
 
     return bet_matrix

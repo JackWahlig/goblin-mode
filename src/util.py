@@ -42,8 +42,14 @@ def format_date(dt):
     return ct_time.strftime('%Y-%m-%d, %I:%M %p')
 
 def print_matrix(matrix):
+    matrix.insert(0, ['Away', 'Home'])
+    matrix[0].extend([''] * (max(map(len, matrix)) - 2))
+
     lens = [max(map(len, col)) for col in zip(*matrix)]
-    fmt = '\t'.join('| {{:{}}} |'.format(x) for x in lens)
+    fmt = '\t'.join(f'| {{:{x}}} |' for x in lens)
     matrix.insert(1, ['-' * len for len in lens])
     table = [fmt.format(*row) for row in matrix]
-    print('\n'.join(table))
+    f = open('output.txt', 'w')
+    f.write('\n'.join(table))
+    f.close()
+    #print('\n'.join(table))
