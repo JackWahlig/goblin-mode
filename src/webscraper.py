@@ -1,5 +1,4 @@
 from bs4 import BeautifulSoup
-import arbitrage
 import cloudscraper
 import json
 import util
@@ -50,8 +49,8 @@ def scrape(leagues, stake, rnd):
                     matrix_entry = [match[AWAY_TEAM][FULL_NAME], match[HOME_TEAM][FULL_NAME], date]
                     for bets in (b for b in match[MARKETS] if len(b[BETS]) == 2):
                         bet_1, bet_2 = bets[BETS][0], bets[BETS][1]
-                        if bet_1[BEST_SB] != bet_2[BEST_SB] and arbitrage.is_arbitrage(int(bet_1[BEST_ODDS]), int(bet_2[BEST_ODDS])):
-                            wager_1, win_1, wager_2, win_2 = arbitrage.arbitrage_calc(stake, bet_1[BEST_ODDS], bet_2[BEST_ODDS], rnd)
+                        if bet_1[BEST_SB] != bet_2[BEST_SB] and util.is_arbitrage(int(bet_1[BEST_ODDS]), int(bet_2[BEST_ODDS])):
+                            wager_1, win_1, wager_2, win_2 = util.arbitrage_calc(stake, bet_1[BEST_ODDS], bet_2[BEST_ODDS], rnd)
                             matrix_entry.append(f"{bet_1['name']:<{BET_NAME_LEN}} {' - ' + util.sportsbook_dict[bet_1[BEST_SB][:2]]:<{SP_NAME_LEN}} {' : ' + util.format_odds(bet_1[BEST_ODDS]):<{ODDS_LEN}}")
                             matrix_entry.append(f"{bet_2['name']:<{BET_NAME_LEN}} {' - ' + util.sportsbook_dict[bet_2[BEST_SB][:2]]:<{SP_NAME_LEN}} {' : ' + util.format_odds(bet_2[BEST_ODDS]):<{ODDS_LEN}}")
                             advice_1 = 'Bet ' + str(wager_1) + '/' + str(wager_2)
