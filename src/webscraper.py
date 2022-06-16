@@ -1,9 +1,10 @@
 from bs4 import BeautifulSoup
+import arbitrage
 import cloudscraper
 import json
 import util
 
-async def scrape(leagues):
+def scrape(leagues):
     BASE_URL = 'base_url'
     CARD = 'card'
     CARDS = 'cards'
@@ -23,6 +24,7 @@ async def scrape(leagues):
     BET_NAME_LEN = 25
     SP_NAME_LEN = 15
     ODDS_LEN = 7
+    DEFAUL_ENTRY_LEN = 3
 
     bet_matrix = []
     for league in leagues:
@@ -39,15 +41,19 @@ async def scrape(leagues):
         with open('test.json', 'w') as f:
             json.dump(matches, f)
 
+        # Extract betting info from JSON
         for match_set in matches:
             date = util.format_date(match_set[DATE])
             for match in match_set[CARDS][0][DATA]:
                 matrix_entry = [match[AWAY_TEAM][FULL_NAME], match[HOME_TEAM][FULL_NAME], date]
-                for all_bets in match[MARKETS]:
-                    for bet in all_bets[BETS]:
-                        matrix_entry.append(f"{bet['name']:<{BET_NAME_LEN}} {' - ' + util.sportsbook_dict[bet[BEST_SB][:2]]:<{SP_NAME_LEN}} {' : ' + util.format_odds(bet[BEST_ODDS]):<{ODDS_LEN}}")
+                for bets in (b for b in match[MARKETS] if len(b[BETS]) == 2):
+                    bet1 = bets[BETS][0]
+                    bet2 = bets[BETS][1]
+                    if arbitrage.is_arbitrage(int(bet1[BEST_ODDS]), int(bet2[BEST_ODDS])):
+                        matrix_entry.append(f"{bet1['name']:<{BET_NAME_LEN}} {' - ' + util.sportsbook_dict[bet1[BEST_SB][:2]]:<{SP_NAME_LEN}} {' : ' + util.format_odds(bet1[BEST_ODDS]):<{ODDS_LEN}}")
+                        matrix_entry.append(f"{bet2['name']:<{BET_NAME_LEN}} {' - ' + util.sportsbook_dict[bet2[BEST_SB][:2]]:<{SP_NAME_LEN}} {' : ' + util.format_odds(bet2[BEST_ODDS]):<{ODDS_LEN}}")
                         
-                bet_matrix.append(matrix_entry)
-
+                if len(matrix_entry) > DEFAUL_ENTRY_LEN:
+                    bet_matrix.append(matrix_entry)
 
     return bet_matrix

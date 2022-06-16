@@ -43,7 +43,10 @@ def format_date(dt):
 
 def print_matrix(matrix):
     matrix.insert(0, ['Away', 'Home'])
-    matrix[0].extend([''] * (max(map(len, matrix)) - 2))
+    # Pad Matrix
+    max_len = max(map(len, matrix))
+    for row in matrix:
+        row.extend([''] * (max_len - len(row)))
 
     lens = [max(map(len, col)) for col in zip(*matrix)]
     fmt = '\t'.join(f'| {{:{x}}} |' for x in lens)
