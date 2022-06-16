@@ -1,3 +1,6 @@
+from datetime import datetime
+import pytz
+
 url_dict = {
     'base_url': 'https://www.oddschecker.com/us/',
     'mlb':      'baseball/mlb',
@@ -6,6 +9,7 @@ url_dict = {
     'ncaaf':    'football/college-football',
     'nfl':      'football/nfl',
     'nhl':      'hockey/nhl',
+    'tennis':   'tennis'
 }
 
 sportsbook_dict = {
@@ -25,21 +29,20 @@ def format_odds(odds):
         return odds
 
 def format_date(dt):
-    from datetime import datetime
-    import pytz
-
     date, time = dt.split('T')
     year, month, day = date.split('-')
     hour, min = time[:-4].split(':')
     d = datetime(int(year), int(month), int(day), int(hour), int(min))
-
+    
     ct = pytz.timezone('America/Chicago')
     utc = pytz.utc
     
     utc_time = utc.localize(d)
     ct_time = utc_time.astimezone(ct)
-    
-    return ct_time.strftime('%Y-%m-%d, %I:%M %p')
+    now = datetime.now(ct)
+
+    # Return formatted time and whether the game is live
+    return (ct_time.strftime('%Y-%m-%d, %I:%M %p'), now > ct_time)
 
 def print_matrix(matrix):
     matrix.insert(0, ['Away', 'Home'])
