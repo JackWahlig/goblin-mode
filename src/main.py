@@ -1,10 +1,9 @@
 import argparse
-from email.policy import default
 import util
 import webscraper
 
 STAKE = 10
-ROUND = 0.25
+ROUND = 0
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Goblin Mode is a WIP sports arbitrage detection app')
@@ -16,7 +15,6 @@ def parse_args():
 if __name__ == '__main__':
     leagues = [
         'mlb',
-        'nba',
         'nhl',
         'nfl'
     ]
