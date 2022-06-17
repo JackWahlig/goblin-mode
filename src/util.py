@@ -1,6 +1,5 @@
 from datetime import datetime
 import pytz
-import smtplib
 
 url_dict = {
     'base_url': 'https://www.oddschecker.com/us/',
@@ -78,7 +77,7 @@ def print_matrix(matrix):
     fmt = '\t'.join(f'| {{:{x}}} |' for x in lens)
     matrix.insert(1, ['-' * len for len in lens])
     table = [fmt.format(*row) for row in matrix]
-    f = open('output.txt', 'w')
+    f = open('./output/output.txt', 'w')
     f.write('\n'.join(table))
     f.close()
-    #print('\n'.join(table))
+    print('\n'.join(table))
