@@ -6,7 +6,7 @@ This app works by scraping oddschecker.com/us for the best odds of upcoming matc
 This app is still a WIP and is intended to include more sports and send email notifications. 
 
 ## Requirements
-[cloudscraper](https://pypi.org/project/cloudscraper/)
+[selenium](https://pypi.org/project/selenium/)
 
 [pytz](https://pypi.org/project/pytz/)
 
