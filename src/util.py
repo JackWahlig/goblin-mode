@@ -54,11 +54,15 @@ def is_arbitrage(odds_1, odds_2):
 
 def arbitrage_calc(stake, odds_1, odds_2, rnd=0):
     payout_1, payout_2 = payout(odds_1), payout(odds_2)
-    bet_1 = round((stake * payout_2) / (payout_1 + payout_2), 2)
-    if rnd:
-        bet_1 = rnd * round(bet_1 / rnd)
-    bet_2 = round(stake - bet_1, 2)     # Round to avoid floating point error
-    return (bet_1, round(bet_1 * payout_1, 2), bet_2, round(bet_2 * payout_2, 2))
+    win_1 = win_2 = -1
+    while win_1 < 0 or win_2 < 0:
+        wager_1 = round((stake * payout_2) / (payout_1 + payout_2), 2)
+        if rnd:
+            wager_1 = round(rnd * round(wager_1 / rnd), 2)      # Round to avoid floating point error
+        wager_2 = round(stake - wager_1, 2)                     # Round to avoid floating point error
+        win_1, win_2 = round(wager_1 * payout_1 - wager_1 - wager_2, 2), round(wager_2 * payout_2 - wager_1 - wager_2, 2)
+        stake += 1
+    return (wager_1, win_1, wager_2, win_2)
 
 def payout(odds):
     if int(odds) > 0:

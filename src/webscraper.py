@@ -79,7 +79,7 @@ def scrape(leagues, stake, rnd):
                             matrix_entry.append(f"{bet_1[NAME]:<{BET_NAME_LEN}} {' - ' + util.sportsbook_dict[bet_1[BEST_SB][:2]]:<{SP_NAME_LEN}} {' : ' + util.format_odds(bet_1[BEST_ODDS]):<{ODDS_LEN}}")
                             matrix_entry.append(f"{bet_2[NAME]:<{BET_NAME_LEN}} {' - ' + util.sportsbook_dict[bet_2[BEST_SB][:2]]:<{SP_NAME_LEN}} {' : ' + util.format_odds(bet_2[BEST_ODDS]):<{ODDS_LEN}}")
                             advice_1 = 'Bet ' + str(wager_1) + '/' + str(wager_2)
-                            advice_2 = 'to win ' + str(round(win_1 - wager_1 - wager_2, 2)) + '/' + str(round(win_2 - wager_1 - wager_2, 2))
+                            advice_2 = 'to win ' + str(win_1) + '/' + str(win_2)
                             matrix_entry.append(f"{advice_1:<{ADVICE_LEN_1}}{advice_2:<{ADVICE_LEN_2}}")
 
                     if len(matrix_entry) > DEFAUL_ENTRY_LEN:

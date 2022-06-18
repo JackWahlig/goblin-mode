@@ -15,6 +15,7 @@ def parse_args():
 if __name__ == '__main__':
     leagues = [
         'mlb',
+        'nba',
         'nhl',
         'nfl'
     ]
