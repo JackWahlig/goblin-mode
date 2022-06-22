@@ -8,30 +8,30 @@ import logging
 import os
 import util
 
-def scrape(leagues, stake, rnd):
-    BASE_URL = 'base_url'
-    CARD = 'card'
-    CARDS = 'cards'
-    MATCHES = 'matches'
-    ID = 'id'
-    ID_CLASS = 'initial-data'
-    DATE = 'date'
-    DATA = 'data'
-    AWAY_TEAM = 'awayTeam'
-    HOME_TEAM = 'homeTeam'
-    FULL_NAME = 'fullName'
-    MARKETS = 'marketsForNewCard'
-    BETS = 'bets'
-    NAME = 'name'
-    BEST_ODDS = 'bestOddsUs'
-    BEST_SB = 'bestOddsBookmakers'
-    BET_NAME_LEN = 25
-    SP_NAME_LEN = 15
-    ADVICE_LEN_1 = 20
-    ADVICE_LEN_2 = 20
-    ODDS_LEN = 7
-    DEFAUL_ENTRY_LEN = 3
+BASE_URL = 'base_url'
+CARD = 'card'
+CARDS = 'cards'
+MATCHES = 'matches'
+ID = 'id'
+ID_CLASS = 'initial-data'
+DATE = 'date'
+DATA = 'data'
+AWAY_TEAM = 'awayTeam'
+HOME_TEAM = 'homeTeam'
+FULL_NAME = 'fullName'
+MARKETS = 'marketsForNewCard'
+BETS = 'bets'
+NAME = 'name'
+BEST_ODDS = 'bestOddsUs'
+BEST_SB = 'bestOddsBookmakers'
+BET_NAME_LEN = 25
+SP_NAME_LEN = 15
+ADVICE_LEN_1 = 20
+ADVICE_LEN_2 = 20
+ODDS_LEN = 7
+DEFAUL_ENTRY_LEN = 3
 
+def scrape(leagues, stake, rnd):
     bet_matrix = []
     for league in leagues:
         # Setup webpage scraper
@@ -85,4 +85,4 @@ def scrape(leagues, stake, rnd):
                     if len(matrix_entry) > DEFAUL_ENTRY_LEN:
                         bet_matrix.append(matrix_entry)
 
-    return bet_matrix
+    return util.format_matrix(bet_matrix)

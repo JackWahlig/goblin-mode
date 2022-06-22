@@ -1,4 +1,5 @@
 from datetime import datetime
+from tabulate import tabulate
 import pytz
 
 url_dict = {
@@ -44,6 +45,13 @@ def format_date(dt):
     # Return formatted time and whether the game is live
     return (ct_time.strftime('%Y-%m-%d, %I:%M %p'), now > ct_time)
 
+def format_matrix(matrix):
+    matrix.insert(0, ['Away', 'Home'])
+    max_len = max(map(len, matrix))
+    for row in matrix:
+        row.extend([''] * (max_len - len(row)))
+    return matrix
+
 def is_arbitrage(odds_1, odds_2):
     if odds_1 > 0:
         if odds_2 > 0 or -odds_2 < odds_1:
@@ -70,18 +78,6 @@ def payout(odds):
     else:
         return (100 / -int(odds)) + 1
 
-def print_matrix(matrix):
-    matrix.insert(0, ['Away', 'Home'])
-    # Pad Matrix
-    max_len = max(map(len, matrix))
-    for row in matrix:
-        row.extend([''] * (max_len - len(row)))
-
-    lens = [max(map(len, col)) for col in zip(*matrix)]
-    fmt = '\t'.join(f'| {{:{x}}} |' for x in lens)
-    matrix.insert(1, ['-' * len for len in lens])
-    table = [fmt.format(*row) for row in matrix]
-    f = open('./output/output.txt', 'w')
-    f.write('\n'.join(table))
-    f.close()
-    print('\n'.join(table))
+def matrix_to_txt(matrix):
+    with open('./output/output.txt', 'w') as f:
+        f.write(tabulate(matrix, headers='firstrow', tablefmt='pretty', ))
