@@ -1,5 +1,5 @@
 # Goblin-Mode
-A sports betting arbitrage app (made for fun and to learn more about webscraping, use at your own risk)
+A sports arbitrage app (made for fun and to learn more about webscraping, use at your own risk)
 
 This app works by scraping oddschecker.com/us for the best odds of upcoming matches and searching for arbitrage opportunities (https://en.wikipedia.org/wiki/Arbitrage_betting). For each arbitrage, the app will calculate how much to bet on each side and the guaranteed returned profit given the odds and a target stake. It can round these bets to any nearest value (e.g. nearest ten dollars, dollar, 50 cents, 10 cents, etc.) to simplify the amounts to bet. 
 
